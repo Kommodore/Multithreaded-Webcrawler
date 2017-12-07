@@ -10,7 +10,7 @@
 #include "msocket.h"
 #include "Queue.h"
 
-#define THREADCOUNT 1
+#define THREADCOUNT 3
 
 void getFileName(char* filename);
 

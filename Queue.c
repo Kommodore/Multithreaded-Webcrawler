@@ -57,8 +57,9 @@ Host queuePop(Queue* queue){
 
         queue->elements--;
         queue->full = 0;
-        if(queue->elements == 0){
+        if(queue->elements < 0){
             queue->empty = 1;
+            queue->elements = 0;
         }
 
         pthread_cond_signal(&queue->notFull);
