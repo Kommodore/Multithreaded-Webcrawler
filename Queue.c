@@ -1,3 +1,4 @@
+#include <memory.h>
 #include "Queue.h"
 
 void queueInit(Queue* queue){
@@ -16,6 +17,7 @@ void queueInit(Queue* queue){
         exit(1);
     }
 
+    queue->full = 0;
     queue->elements = 0;
     queue->finished = 0;
     queue->empty = 1;
@@ -32,8 +34,8 @@ void queueDelete(Queue* queue){
 
 void queuePush(Queue* queue, char* hostname, char* documentPath, int id){
     if(queue->elements != QUEUESIZE){
-        queue->hosts[queue->elements].hostname = hostname;
-        queue->hosts[queue->elements].documentPath = documentPath;
+        strcpy(queue->hosts[queue->elements].hostname, hostname);
+        strcpy(queue->hosts[queue->elements].documentPath, documentPath);
         queue->hosts[queue->elements].id = id;
 
         queue->elements++;
@@ -47,7 +49,7 @@ void queuePush(Queue* queue, char* hostname, char* documentPath, int id){
 }
 
 Host queuePop(Queue* queue){
-    if(queue->empty != 0){
+    if(queue->empty == 0){
         Host temp = queue->hosts[0];
         for(int i = 0; i < QUEUESIZE-1; i++){
             queue->hosts[i]= queue->hosts[i+1];

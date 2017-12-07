@@ -9,8 +9,8 @@
 #define QUEUESIZE 8
 
 typedef struct{
-    char* hostname;
-    char* documentPath;
+    char hostname[256];
+    char documentPath[256];
     int id;
 } Host;
 

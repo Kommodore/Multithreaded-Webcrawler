@@ -1,4 +1,5 @@
 #include "Webbot.h"
+#include "Queue.h"
 
 Queue queue;
 
@@ -6,6 +7,7 @@ int main(){
 	char filename[256];
     pthread_t workerThreads[THREADCOUNT];
     pthread_t readerThreadId = NULL;
+    pthread_t testThread = NULL;
 
     getFileName(filename);
 
@@ -14,7 +16,13 @@ int main(){
         printf("Reader Thread konnte nicht erstellt werden");
     }
 
-    for(unsigned int i = 0; i < THREADCOUNT; i++){
+
+    errorCode = pthread_create(&testThread, NULL, workerThread, (void*)1);
+    if(errorCode != 0){
+        printf("Test Thread konnte nicht erstellt werden");
+    }
+
+    /*for(unsigned int i = 0; i < THREADCOUNT; i++){
         errorCode = pthread_create(&(workerThreads[i]), NULL, workerThread, (void*)(long)i);
         if(errorCode != 0){
             printf("Thread %i konnte nicht erstellt werden",i);
@@ -24,7 +32,7 @@ int main(){
 
     for(int i = 0; i < THREADCOUNT; i++){
         pthread_join(workerThreads[i], NULL);
-    }
+    }*/
      pthread_join(readerThreadId, NULL);
 
     queueDelete(&queue);
@@ -68,7 +76,9 @@ void* workerThread(void* id){
         }
         Host currHost = queuePop(&queue);
         pthread_mutex_unlock(&queue.locked);
-        saveSiteContent(currHost.id, threadId, currHost.hostname, currHost.documentPath);
+        if(strcmp(currHost.hostname, "") != 0){
+            saveSiteContent(currHost.id, threadId, currHost.hostname, currHost.documentPath);
+        }
     }
 
     return NULL;
@@ -84,7 +94,6 @@ void getFileName(char* filename){
 void fetchHosts(FILE* file, int* line){
     char hostname[256];
     char documentPath[256];
-
     while (fscanf(file, "%s %s\n", hostname, documentPath) != EOF){
         queuePush(&queue, hostname, documentPath, *line);
         (*line)++;
