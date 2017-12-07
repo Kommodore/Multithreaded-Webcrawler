@@ -1,4 +1,5 @@
 #include "Webbot.h"
+#include "Queue.h"
 
 Queue queue;
 
@@ -59,6 +60,7 @@ void* readerThread(void* file){
         pthread_mutex_lock(&queue.locked);
         while(queue.full){
             printf("Warteschlange ist voll. Thread Reader wartet...\n");
+            pthread_cond_signal(&queue.notEmpty);
             pthread_cond_wait(&queue.notFull, &queue.locked);
         }
         fetchHosts(pagelist, &line);
@@ -83,7 +85,8 @@ void* workerThread(void* arg){
             if(queue.finished){
                 return NULL;
             }
-            printf("Warteschlange ist leer. Thread %u wartet...\n", pthread_self());
+            printf("Warteschlange ist leer. Thread %lu wartet...\n", (unsigned long)pthread_self());
+            pthread_cond_signal(&queue.notFull);
             pthread_cond_wait(&queue.notEmpty, &queue.locked);
         }
         Host currHost = queuePop(&queue);
@@ -138,12 +141,12 @@ void saveSiteContent(int hostNumber, pthread_t threadId, const char* address, co
     sprintf(temp, "%d", hostNumber);
 	strcat(fileName, temp);
 	strcat(fileName, "_");
-    sprintf(temp, "%d", threadId);
+    sprintf(temp, "%lu", threadId);
 	strcat(fileName, temp);
 	strcat(fileName, ".html");
 
     int error = askServer(address, page, fileName);
-    printf("Thread %u fetched %s\n",threadId, address);
+    printf("Thread %lu fetched %s\n",(unsigned long)threadId, address);
     if(error != 0){
         printf("Die Seite konnte nicht gefetcht werden!");
     }
