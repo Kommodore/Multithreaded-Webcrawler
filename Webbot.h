@@ -17,8 +17,8 @@ void fetchHosts(FILE* file, int* line);
 
 void* readerThread(void* file);
 
-void* workerThread(void* id);
+void* workerThread(void* arg);
 
-void saveSiteContent(int hostNumber, int threadId, const char* address, const char* page);
+void saveSiteContent(int hostNumber, pthread_t threadId, const char* address, const char* page);
 
 #endif //BS_PRAKTIKUM2_WEBBOT_H

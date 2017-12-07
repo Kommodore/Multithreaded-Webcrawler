@@ -6,7 +6,7 @@ int main(){
 	char filename[256];
     time_t startTime, endTime;
     pthread_t workerThreads[THREADCOUNT];
-    pthread_t readerThreadId = NULL;
+    pthread_t readerThreadId;
 
     getFileName(filename);
 
@@ -20,7 +20,7 @@ int main(){
     }
 
     for(unsigned int i = 0; i < THREADCOUNT; i++){
-        errorCode = pthread_create(&(workerThreads[i]), NULL, workerThread, (void*)(long)i);
+        errorCode = pthread_create(&(workerThreads[i]), NULL, workerThread, NULL);
         if(errorCode != 0){
             printf("Worker Thread %i konnte nicht erstellt werden",i);
             exit(1);
@@ -75,22 +75,21 @@ void* readerThread(void* file){
  * @param id The id of the Thread
  * @return
  */
-void* workerThread(void* id){
+void* workerThread(void* arg){
 
-    const int threadId = (*(int*)id);
     while(!queue.finished || !queue.empty){
         pthread_mutex_lock(&queue.locked);
         while(queue.empty){
             if(queue.finished){
                 return NULL;
             }
-            printf("Warteschlange ist leer. Thread %d wartet...\n", threadId);
+            printf("Warteschlange ist leer. Thread %u wartet...\n", pthread_self());
             pthread_cond_wait(&queue.notEmpty, &queue.locked);
         }
         Host currHost = queuePop(&queue);
         pthread_mutex_unlock(&queue.locked);
         if(strcmp(currHost.hostname, "") != 0){
-            saveSiteContent(currHost.id, threadId, currHost.hostname, currHost.documentPath);
+            saveSiteContent(currHost.id, pthread_self(), currHost.hostname, currHost.documentPath);
         }
     }
 
@@ -133,7 +132,7 @@ void fetchHosts(FILE* file, int* line){
  * @param address The address part of the url
  * @param page The directory part of the url
  */
-void saveSiteContent(int hostNumber, int threadId, const char* address, const char* page){
+void saveSiteContent(int hostNumber, pthread_t threadId, const char* address, const char* page){
     char temp[128];
 	char fileName[256] = "file_";
     sprintf(temp, "%d", hostNumber);
@@ -144,7 +143,7 @@ void saveSiteContent(int hostNumber, int threadId, const char* address, const ch
 	strcat(fileName, ".html");
 
     int error = askServer(address, page, fileName);
-    printf("Thread %d fetched %s\n",threadId, address);
+    printf("Thread %u fetched %s\n",threadId, address);
     if(error != 0){
         printf("Die Seite konnte nicht gefetcht werden!");
     }
