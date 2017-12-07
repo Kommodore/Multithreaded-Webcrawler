@@ -77,7 +77,7 @@ void* readerThread(void* file){
  */
 void* workerThread(void* id){
 
-    const int threadId = (int)id;
+    const int threadId = (*(int*)id);
     while(!queue.finished || !queue.empty){
         pthread_mutex_lock(&queue.locked);
         while(queue.empty){

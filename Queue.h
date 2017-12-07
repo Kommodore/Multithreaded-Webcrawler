@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <ntsid.h>
 #include <pthread.h>
 
 #define QUEUESIZE 8

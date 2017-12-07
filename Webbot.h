@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <memory.h>
-#include <ntsid.h>
 #include <pthread.h>
 
 #include "msocket.h"
