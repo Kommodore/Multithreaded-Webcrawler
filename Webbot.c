@@ -1,7 +1,15 @@
 #include "Webbot.h"
 #include "Queue.h"
 
-Queue queue;
+Queue queue = {
+        .elements = 0,
+        .empty = 1,
+        .full = 0,
+        .finished = 0,
+        .locked = PTHREAD_MUTEX_INITIALIZER,
+        .notEmpty = PTHREAD_COND_INITIALIZER,
+        .notFull = PTHREAD_COND_INITIALIZER,
+};
 
 int main(){
 	char filename[256];

@@ -2,7 +2,7 @@
 #include "Queue.h"
 
 void queueInit(Queue* queue){
-    if(pthread_mutex_init(&queue->locked, NULL) != 0){
+    /*if(pthread_mutex_init(&queue->locked, NULL) != 0){
         printf("Could not create mutex.");
         exit(1);
     }
@@ -15,12 +15,7 @@ void queueInit(Queue* queue){
     if(pthread_cond_init(&queue->notEmpty, NULL) != 0){
         printf("Could not create notEmpty condition");
         exit(1);
-    }
-
-    queue->full = 0;
-    queue->elements = 0;
-    queue->finished = 0;
-    queue->empty = 1;
+    }*/
 }
 
 void queueDelete(Queue* queue){
