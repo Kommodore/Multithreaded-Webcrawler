@@ -17,14 +17,13 @@ typedef struct{
     int empty;
     int full;
     int finished;
+    int offset;
     pthread_mutex_t locked;
     pthread_cond_t notEmpty;
     pthread_cond_t notFull;
     int elements;
     Host hosts[QUEUESIZE];
 } Queue;
-
-void queueInit(Queue* queue);
 
 void queueDelete(Queue* queue);
 

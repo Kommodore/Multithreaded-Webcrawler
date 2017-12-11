@@ -63,7 +63,6 @@ void* readerThread(void* file){
         exit(2);
     }
 
-    queueInit(&queue);
     while(!queue.finished){
         pthread_mutex_lock(&queue.locked);
         while(queue.full){
