@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 
-#define QUEUESIZE 8
+#define QUEUESIZE 5
 
 typedef struct{
     char hostname[256];
@@ -27,7 +27,7 @@ typedef struct{
 
 void queueDelete(Queue* queue);
 
-void queuePush(Queue* queue, char* hostname, char* documentPath, int id);
+void queuePush(Queue* queue, Host* toSave);
 
 Host queuePop(Queue* queue);
 

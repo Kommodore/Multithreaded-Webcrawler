@@ -11,14 +11,24 @@
 
 #define THREADCOUNT 3
 
+typedef struct {
+    Queue* queue;
+    char* fileName;
+} toPass;
+
+typedef struct {
+    Queue* queue;
+    int threadId;
+} toPass2;
+
 void getFileName(char* filename);
 
-void fetchHosts(FILE* file, int* line);
+Host* fetchHosts(Queue* queue, FILE* file, Host* save, int* line);
 
 void* readerThread(void* file);
 
 void* workerThread(void* arg);
 
-void saveSiteContent(int hostNumber, pthread_t threadId, const char* address, const char* page);
+void saveSiteContent(int hostNumber, int threadId, const char* address, const char* page);
 
 #endif //BS_PRAKTIKUM2_WEBBOT_H

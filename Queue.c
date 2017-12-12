@@ -11,12 +11,12 @@ void queueDelete(Queue* queue){
     pthread_cond_destroy(&queue->notFull);
 }
 
-void queuePush(Queue* queue, char* hostname, char* documentPath, int id){
+void queuePush(Queue* queue, Host* toSave){
     if(queue->elements != QUEUESIZE){
-        strcpy(queue->hosts[(queue->elements+queue->offset)%QUEUESIZE].hostname, hostname);
-        strcpy(queue->hosts[(queue->elements+queue->offset)%QUEUESIZE].documentPath, documentPath);
-        queue->hosts[(queue->elements+queue->offset)%QUEUESIZE].id = id;
-
+        strcpy(queue->hosts[(queue->elements+queue->offset)%QUEUESIZE].hostname, toSave->hostname);
+        strcpy(queue->hosts[(queue->elements+queue->offset)%QUEUESIZE].documentPath, toSave->documentPath);
+        queue->hosts[(queue->elements+queue->offset)%QUEUESIZE].id = toSave->id;
+        //printf("\t\tPushed: %s%s to pos %d\n", toSave->hostname, toSave->documentPath, (queue->elements+queue->offset)%QUEUESIZE);
         queue->elements++;
         queue->empty = 0;
         pthread_cond_signal(&queue->notEmpty);
@@ -43,6 +43,7 @@ Host queuePop(Queue* queue){
         }
 
         pthread_cond_signal(&queue->notFull);
+        //printf("\t\tDropped: %s%s from pos %d\n", temp.hostname, temp.documentPath, queue->offset);
         return temp;
     }
 
